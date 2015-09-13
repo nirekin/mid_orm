@@ -1,0 +1,99 @@
+<html>
+<head>
+	<link href="/resources/style.css" rel="stylesheet">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+	<script>
+		function submithf1(id){
+			document.forms["hf1"]["DecId"].value = id;
+			document.forms["hf1"].submit();
+		}
+
+		$(document).ready(function(){
+			 $(document).ajaxStart(function(){
+		        $("#wait").css("display", "block");
+		    });
+		    $(document).ajaxComplete(function(){
+		        $("#wait").css("display", "none");
+    		});
+
+			$("#pingButton").click(function(e){
+				e.preventDefault();
+				$.post("/pingAsyncTestErpEntry/",
+				    {
+				        FieldId: "{{.Id}}",
+				        TestContent: $("#textStr").val()
+				    },
+				    function(data, status){
+				        $("#pingContent").html(data);
+    				});
+			});
+		});
+	</script>
+</head>
+
+<body>
+
+<h1>Add a decorator:</h1>
+
+[<a href="/editSyncField/{{.Id}}">SyncField</a>]
+
+	<p>
+	Id: {{.Id}}<br>
+	ErpEntryId: {{.ErpEntryId}}<br>
+	CreationDate: {{.CreationDate}}<br>
+	FieldName: {{.FieldName}}<br>
+
+<form name="myForm" action="/requestAddDecorator/" method="POST">
+	<input type="hidden" value="{{.Id}}" name="FieldId" />
+	<select name="DecoratorId">
+		<option value="selectstuff">--- Please select ---</option>
+		{{range .PredefinedDecorators}}
+			  <option value="{{.Id}}">{{.Name}} {{.Description}}</option>
+		{{end}}
+	</select>
+	<div>
+		<input type="submit" value="add">
+	</div>
+</form>
+<P>
+<table>
+	<tr>
+		<th>Name</th>
+		<th>Description</th>
+		<th>SortingOrder</th>
+		<th>Params</th>
+		<th>Delete</th>
+	</tr>
+{{range .Decorators}}
+	<tr>
+		<td align="center">{{.Name}}</td>
+		<td align="center">{{.Description}}</td>
+		<td align="center">{{.SortingOrder}}</td>
+		<td align="center">{{.Params}}</td>
+		<td align="center"><a href="javascript:submithf1('{{.Id}}');"><img src="/resources/delete.png" alt="delete" style="width:20px;height:20px"></a></td>
+	</tr>
+{{end}}
+
+<P>
+
+</table>
+
+<table>
+	<tr class="commonBlock">
+		<td>Imput</td>
+		<td><input id="textStr" size="150" maxlength="150" value="Enter here the content to test"></td>
+	</tr>
+
+<table>
+
+<div id="wait" style="display:none;width:69px;height:89px;border:1px solid black;position:absolute;top:50%;left:50%;padding:2px;"><img src='/resources/loading.gif' width="64" height="64" /><br>Loading..</div>
+
+<button id="pingButton">Test</button>
+<p id="pingContent"></p>
+
+<form name="hf1" action="/deleteDecoratorInAdd/" method="POST">
+		<input type="hidden" value="" name="DecId" />
+		<input type="hidden" value="{{.Id}}" name="FieldId" />
+	</form>
+</body>
+</html>

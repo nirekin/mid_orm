@@ -1,0 +1,27 @@
+	<script>
+		function submitCreateSyncField(name){
+			document.forms["hf1"]["FieldName"].value = name;
+			document.forms["hf1"].submit();
+		}
+
+	</script>
+
+<table>
+	<tr>
+		<th>Name</th>
+		<th>Used</th>
+		<th>Add synchronized field</th>
+	</tr>
+	{{range .Fields}}
+		<tr>
+			<td align="center">{{.Name}}</td>
+			<td align="center">{{.Used}}</td>
+			<td align="center"><a href="javascript:submitCreateSyncField('{{.Name}}');"> >> </a></td>
+		</tr>
+	{{end}}
+</table>
+
+	<form name="hf1" action="/createSyncField/" method="POST">
+		<input type="hidden" value="{{.Id}}" name="Id" />
+		<input type="hidden" value="" name="FieldName" />
+	</form>
